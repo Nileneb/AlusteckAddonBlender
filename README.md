@@ -21,7 +21,7 @@ Ein **intelligentes Baukastensystem** direkt in Blender, das:
 
 ## 📐 System-Architektur
 
-```
+```mermaid
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                        ALUSTECK BUILDER v2.0                            │
 ├─────────────────────────────────────────────────────────────────────────┤
@@ -358,12 +358,12 @@ alusteck_builder/
 - [ ] Steg-Varianten integrieren
 - [ ] Schnittbild-Optionen
 
-### Phase 3: Snap-Engine 📋
+### Phase 3: Snap-Engine ✅
 
-- [ ] Port-basiertes Snap-System
-- [ ] Kollisionserkennung
-- [ ] Steg-Kompatibilitätsprüfung
-- [ ] Visuelle Snap-Vorschau (Highlighting)
+- [x] Port-basiertes Snap-System
+- [x] Kollisionserkennung
+- [x] Steg-Kompatibilitätsprüfung
+- [x] Visuelle Snap-Vorschau (Highlighting)
 
 ### Phase 4: Export & Polish 📋
 
