@@ -2,11 +2,14 @@
 
 try:
     import bpy
+    HAS_BLENDER = True
 except ImportError:
     bpy = None
+    HAS_BLENDER = False
 
 
-class ALUSTECK_MT_add_menu(bpy.types.Menu if bpy else object):
+if HAS_BLENDER:
+    class ALUSTECK_MT_add_menu(bpy.types.Menu):
     """Add menu for Alusteck components."""
     bl_idname = "ALUSTECK_MT_add_menu"
     bl_label = "Alusteck Builder"
@@ -43,11 +46,14 @@ def _menu_func(self, context):
     self.layout.menu("ALUSTECK_MT_add_menu", icon='PLUGIN')
 
 
-classes = (ALUSTECK_MT_add_menu,) if bpy else tuple()
+if HAS_BLENDER:
+    classes = (ALUSTECK_MT_add_menu,)
+else:
+    classes = tuple()
 
 
 def register_menus():
-    if not bpy:
+    if not HAS_BLENDER:
         return
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -55,7 +61,7 @@ def register_menus():
 
 
 def unregister_menus():
-    if not bpy:
+    if not HAS_BLENDER:
         return
     bpy.types.VIEW3D_MT_mesh_add.remove(_menu_func)
     for cls in reversed(classes):

@@ -2,11 +2,14 @@
 
 try:
     import bpy
+    HAS_BLENDER = True
 except ImportError:
     bpy = None
+    HAS_BLENDER = False
 
 
-class ALUSTECK_PT_main_panel(bpy.types.Panel if bpy else object):
+if HAS_BLENDER:
+    class ALUSTECK_PT_main_panel(bpy.types.Panel):
     """Main Alusteck Builder sidebar panel."""
     bl_label = "Alusteck Builder"
     bl_idname = "ALUSTECK_PT_main_panel"
@@ -36,8 +39,8 @@ class ALUSTECK_PT_main_panel(bpy.types.Panel if bpy else object):
         col.operator("alusteck.export_costs", text="Kostenberechnung", icon='MONEY')
         col.operator("alusteck.export_shop_link", text="Shop-Link", icon='WORLD')
 
-
-class ALUSTECK_PT_database_panel(bpy.types.Panel if bpy else object):
+if HAS_BLENDER:
+    class ALUSTECK_PT_database_panel(bpy.types.Panel):
     """Database information panel."""
     bl_label = "Komponenten"
     bl_idname = "ALUSTECK_PT_database_panel"
@@ -66,21 +69,24 @@ class ALUSTECK_PT_database_panel(bpy.types.Panel if bpy else object):
             layout.label(text=f"Fehler beim Laden: {e}")
 
 
-classes = (
-    ALUSTECK_PT_main_panel,
-    ALUSTECK_PT_database_panel,
-) if bpy else tuple()
+if HAS_BLENDER:
+    classes = (
+        ALUSTECK_PT_main_panel,
+        ALUSTECK_PT_database_panel,
+    )
+else:
+    classes = tuple()
 
 
 def register_panels():
-    if not bpy:
+    if not HAS_BLENDER:
         return
     for cls in classes:
         bpy.utils.register_class(cls)
 
 
 def unregister_panels():
-    if not bpy:
+    if not HAS_BLENDER:
         return
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
