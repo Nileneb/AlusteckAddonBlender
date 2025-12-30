@@ -11,7 +11,7 @@ Intelligentes Snap-System für automatische Verbindungen mit:
 
 import bpy
 import bmesh
-from mathutils import Vector, Matrix
+from mathutils import kdtree, Vector, Matrix
 import math
 from typing import List, Dict, Optional, Tuple
 from dataclasses import dataclass
