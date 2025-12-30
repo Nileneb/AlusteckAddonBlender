@@ -11,8 +11,7 @@ Intelligentes Snap-System für automatische Verbindungen mit:
 
 import bpy
 import bmesh
-from mathutils import Vector, Matrix, kdtree
-from mathutils import geometry
+from mathutils import Vector, Matrix
 import math
 from typing import List, Dict, Optional, Tuple
 from dataclasses import dataclass
@@ -610,7 +609,7 @@ def get_snap_engine() -> AlusteckSnapEngine:
 # ============================================================================
 
 class ALUSTECK_OT_snap_move(bpy.types.Operator):
-    """Move with automatic snapping to connectors"""
+    """Move with automatic snapping to connectors (own modal loop - no conflicts)"""
     bl_idname = "alusteck.snap_move"
     bl_label = "Snap Move"
     bl_options = {'REGISTER', 'UNDO', 'GRAB_CURSOR', 'BLOCKING'}
@@ -619,38 +618,82 @@ class ALUSTECK_OT_snap_move(bpy.types.Operator):
     _timer = None
     _handle = None
     _initial_mouse = None
+    _initial_pos = None
     _current_candidate = None
+    _is_moving = False
     
     def modal(self, context, event):
+        """Own modal loop - no nested bpy.ops.transform calls."""
         engine = get_snap_engine()
         
-        if event.type in {'MOUSEMOVE', 'INBETWEEN_MOUSEMOVE'}:
-            # Finde Snap-Kandidaten
-            profile = context.active_object
-            cursor_loc = profile.location.copy()
-            
-            candidates = engine.find_snap_candidates(profile, cursor_loc, max_candidates=1)
-            
-            if candidates:
-                self._current_candidate = candidates[0]
-                # Visual Feedback aktualisieren
-                context.area.tag_redraw()
-            else:
-                self._current_candidate = None
-                context.area.tag_redraw()
+        if event.type == 'TIMER':
+            # Echtzeit-Update bei Mausbewegung
+            if self._is_moving and context.active_object:
+                profile = context.active_object
+                
+                # Aktuelle Mausposition
+                mouse_delta = Vector((
+                    event.mouse_region_x - self._initial_mouse.x,
+                    event.mouse_region_y - self._initial_mouse.y
+                ))
+                
+                # Mausposition in 3D-Raum konvertieren
+                region = context.region
+                region_3d = context.space_data.region_3d
+                
+                # Einfache Projektion: delta in viewport-pixels
+                move_offset = mouse_delta * 0.01
+                profile.location = self._initial_pos + Vector((
+                    move_offset.x,
+                    move_offset.y,
+                    0.0
+                ))
+                
+                # Finde Snap-Kandidaten
+                candidates = engine.find_snap_candidates(
+                    profile, 
+                    profile.location,
+                    max_candidates=1
+                )
+                
+                if candidates:
+                    self._current_candidate = candidates[0]
+                    # Visual Feedback
+                    if context.area:
+                        context.area.tag_redraw()
+                else:
+                    self._current_candidate = None
+                    if context.area:
+                        context.area.tag_redraw()
         
         elif event.type == 'LEFTMOUSE':
-            # Snap ausführen
-            if self._current_candidate:
-                engine.execute_snap(context.active_object, self._current_candidate)
+            if event.value == 'PRESS':
+                # Start dragging
+                self._is_moving = True
+                self._initial_pos = context.active_object.location.copy()
+                self._initial_mouse = Vector((event.mouse_region_x, event.mouse_region_y))
             
-            self._cleanup(context)
-            return {'FINISHED'}
+            elif event.value == 'RELEASE':
+                # Drop - execute snap if candidate
+                if self._current_candidate and context.active_object:
+                    engine.execute_snap(context.active_object, self._current_candidate)
+                    self.report({'INFO'}, "Snapped successfully")
+                
+                self._cleanup(context)
+                return {'FINISHED'}
         
         elif event.type in {'RIGHTMOUSE', 'ESC'}:
-            # Abbrechen
+            # Cancel - restore original position
+            if context.active_object:
+                context.active_object.location = self._initial_pos
+            
             self._cleanup(context)
             return {'CANCELLED'}
+        
+        elif event.type == 'TIMER':
+            # Periodisches Redraw
+            if context.area:
+                context.area.tag_redraw()
         
         return {'RUNNING_MODAL'}
     
@@ -659,16 +702,19 @@ class ALUSTECK_OT_snap_move(bpy.types.Operator):
             self.report({'WARNING'}, "Select an Alusteck profile")
             return {'CANCELLED'}
         
-        # Setup
+        # Setup initial state
+        obj = context.active_object
         self._initial_mouse = Vector((event.mouse_region_x, event.mouse_region_y))
+        self._initial_pos = obj.location.copy()
+        self._current_candidate = None
+        self._is_moving = False
         
-        # Start Grab-Mode
-        bpy.ops.transform.translate('INVOKE_DEFAULT')
+        # Add timer für regelmäßige Updates
+        wm = context.window_manager
+        self._timer = wm.event_timer_add(0.016, window=context.window)  # ~60 FPS
+        wm.modal_handler_add(self)
         
-        # Add modal handler
-        context.window_manager.modal_handler_add(self)
-        
-        # Add draw handler für visual feedback
+        # Add draw handler für visual feedback (kein nested modal!)
         self._handle = bpy.types.SpaceView3D.draw_handler_add(
             self._draw_snap_highlights, 
             (context,), 
@@ -676,48 +722,64 @@ class ALUSTECK_OT_snap_move(bpy.types.Operator):
             'POST_VIEW'
         )
         
+        self.report({'INFO'}, "LMB drag to move, Snap preview shows green")
         return {'RUNNING_MODAL'}
     
     def _draw_snap_highlights(self, context):
-        """Zeichnet Snap-Vorschau"""
-        import gpu
-        from gpu_extras.batch import batch_for_shader
+        """Zeichnet Snap-Vorschau (Grüner Kreis um nächsten Port)."""
+        try:
+            import gpu
+            from gpu_extras.batch import batch_for_shader
+        except ImportError:
+            return  # GPU module nicht verfügbar
         
         if not self._current_candidate:
             return
         
-        # Shader
-        shader = gpu.shader.from_builtin('UNIFORM_COLOR')
-        
-        # Port-Position als Sphere
-        port_pos = self._current_candidate.port.position
-        
-        # Einfacher Kreis um Port
-        segments = 32
-        radius = 0.05
-        vertices = []
-        
-        for i in range(segments):
-            angle = (i / segments) * 2 * math.pi
-            x = port_pos.x + radius * math.cos(angle)
-            y = port_pos.y + radius * math.sin(angle)
-            z = port_pos.z
-            vertices.append((x, y, z))
-        
-        batch = batch_for_shader(shader, 'LINE_LOOP', {"pos": vertices})
-        
-        shader.bind()
-        shader.uniform_float("color", (0.0, 1.0, 0.0, 1.0))  # Grün
-        batch.draw(shader)
+        try:
+            # Shader
+            shader = gpu.shader.from_builtin('UNIFORM_COLOR')
+            
+            # Port-Position
+            port_pos = self._current_candidate.port.position
+            
+            # Kreis um Port
+            segments = 32
+            radius = 0.05
+            vertices = []
+            
+            for i in range(segments):
+                angle = (i / segments) * 2 * math.pi
+                x = port_pos.x + radius * math.cos(angle)
+                y = port_pos.y + radius * math.sin(angle)
+                z = port_pos.z
+                vertices.append((x, y, z))
+            
+            batch = batch_for_shader(shader, 'LINE_LOOP', {"pos": vertices})
+            
+            shader.bind()
+            shader.uniform_float("color", (0.0, 1.0, 0.0, 0.8))  # Grün
+            batch.draw(shader)
+        except Exception:
+            pass  # GPU drawing fehler - nicht kritisch
     
     def _cleanup(self, context):
-        """Räumt Modal Handler auf"""
+        """Räumt Modal Handler und Timer auf."""
+        wm = context.window_manager
+        
+        if self._timer:
+            wm.event_timer_remove(self._timer)
+            self._timer = None
+        
         if self._handle:
             bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
+            self._handle = None
         
-        context.area.tag_redraw()
+        if context.area:
+            context.area.tag_redraw()
     
     def _is_valid_profile(self, obj):
+        """Check if object is an Alusteck profile."""
         return (obj and obj.type == 'MESH' and 
                 obj.get("alusteck_component") == "profile")
 

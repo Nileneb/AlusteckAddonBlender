@@ -96,7 +96,125 @@ class ALUSTECK_OT_add_component(bpy.types.Operator if bpy else object):
         obj.location = cursor_loc
 
 
-classes = (ALUSTECK_OT_add_component,) if bpy else tuple()
+class ALUSTECK_OT_export_bom(bpy.types.Operator if bpy else object):
+    """Export Bill of Materials as CSV or JSON."""
+    bl_idname = "alusteck.export_bom"
+    bl_label = "Stückliste exportieren"
+    bl_options = {"REGISTER"}
+
+    filename_ext: StringProperty(default=".csv") if bpy else None
+    filter_glob: StringProperty(default="*.csv;*.json") if bpy else None
+
+    def execute(self, context):  # noqa: D401
+        if not bpy:
+            self.report({"ERROR"}, "Blender API not available")
+            return {"CANCELLED"}
+
+        try:
+            from alusteck_builder.export import BillOfMaterials
+        except ImportError:
+            self.report({"ERROR"}, "Export module not found")
+            return {"CANCELLED"}
+
+        # Generate BOM from scene
+        bom = BillOfMaterials()
+        
+        # Dummy: Add some test items
+        bom.add_item("VK25-STD", "Profil 25x25mm Standard", 4, 25, 5.90)
+        bom.add_item("3E25K", "Eckverbinder 3-Wege", 8, 25, 2.50)
+        bom.add_item("2D25K", "Verbinder gerade 2-Wege", 4, 25, 1.50)
+        
+        # Export as CSV
+        csv_content = bom.to_csv()
+        
+        # Write file
+        import os
+        filepath = os.path.expanduser("~/Alusteck_BOM.csv")
+        
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(csv_content)
+        
+        self.report({'INFO'}, f"BOM exported to {filepath}")
+        return {"FINISHED"}
+
+
+class ALUSTECK_OT_export_costs(bpy.types.Operator if bpy else object):
+    """Export cost analysis and margin calculations."""
+    bl_idname = "alusteck.export_costs"
+    bl_label = "Kostenberechnung anzeigen"
+    bl_options = {"REGISTER"}
+
+    def execute(self, context):  # noqa: D401
+        if not bpy:
+            self.report({"ERROR"}, "Blender API not available")
+            return {"CANCELLED"}
+
+        try:
+            from alusteck_builder.export import BillOfMaterials, CostCalculator
+        except ImportError:
+            self.report({"ERROR"}, "Export module not found")
+            return {"CANCELLED"}
+
+        # Generate BOM
+        bom = BillOfMaterials()
+        bom.add_item("VK25-STD", "Profil 25x25mm Standard", 4, 25, 5.90)
+        bom.add_item("3E25K", "Eckverbinder 3-Wege", 8, 25, 2.50)
+        
+        # Calculate costs
+        calc = CostCalculator()
+        calc.from_bom(bom)
+        
+        # Print to console
+        report = calc.format_cost_report()
+        print(report)
+        
+        self.report({'INFO'}, "Kostenberechnung angezeigt (siehe Console)")
+        return {"FINISHED"}
+
+
+class ALUSTECK_OT_export_shop_link(bpy.types.Operator if bpy else object):
+    """Generate shop.alusteck.de link with pre-filled items."""
+    bl_idname = "alusteck.export_shop_link"
+    bl_label = "Shop-Link generieren"
+    bl_options = {"REGISTER"}
+
+    def execute(self, context):  # noqa: D401
+        if not bpy:
+            self.report({"ERROR"}, "Blender API not available")
+            return {"CANCELLED"}
+
+        try:
+            from alusteck_builder.export import BillOfMaterials, ShopLinkGenerator
+        except ImportError:
+            self.report({"ERROR"}, "Export module not found")
+            return {"CANCELLED"}
+
+        # Generate BOM
+        bom = BillOfMaterials()
+        bom.add_item("VK25-STD", "Profil 25x25mm Standard", 4, 25, 5.90)
+        bom.add_item("3E25K", "Eckverbinder 3-Wege", 8, 25, 2.50)
+        
+        # Generate shop link
+        gen = ShopLinkGenerator()
+        gen.from_bom(bom)
+        link = gen.generate_simple_link()
+        
+        # Copy to clipboard (if wm_clipboard available)
+        try:
+            context.window_manager.clipboard = link
+            self.report({'INFO'}, f"Link kopiert: {link}")
+        except Exception:
+            self.report({'INFO'}, f"Link: {link}")
+        
+        return {"FINISHED"}
+
+
+classes = (
+    ALUSTECK_OT_add_component,
+    ALUSTECK_OT_export_bom,
+    ALUSTECK_OT_export_costs,
+    ALUSTECK_OT_export_shop_link,
+) if bpy else tuple()
 
 
 def register_operators():

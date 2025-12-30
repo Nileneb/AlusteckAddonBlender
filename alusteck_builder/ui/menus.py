@@ -1,9 +1,62 @@
-"""Blender menus placeholder."""
+"""Blender menus for Alusteck Builder - Add menu integration."""
+
+try:
+    import bpy
+except ImportError:
+    bpy = None
+
+
+class ALUSTECK_MT_add_menu(bpy.types.Menu if bpy else object):
+    """Add menu for Alusteck components."""
+    bl_idname = "ALUSTECK_MT_add_menu"
+    bl_label = "Alusteck Builder"
+
+    def draw(self, context):  # noqa: D401
+        layout = self.layout
+        
+        # Systems
+        layout.label(text="Systeme:")
+        row = layout.row(align=True)
+        row.label(text="20mm")
+        row.label(text="25mm")
+        row.label(text="30mm")
+        
+        # Components
+        layout.separator()
+        layout.label(text="Komponenten:")
+        col = layout.column(align=True)
+        op = col.operator("alusteck.add_component", text="Profil")
+        op.component_type = "PROFILE"
+        op.system = "25"
+        
+        op = col.operator("alusteck.add_component", text="Verbinder")
+        op.component_type = "CONNECTOR"
+        op.system = "25"
+        
+        op = col.operator("alusteck.add_component", text="Zubehör")
+        op.component_type = "ACCESSORY"
+        op.system = "25"
+
+
+def _menu_func(self, context):
+    """Add Alusteck menu to Add > Mesh menu."""
+    self.layout.menu("ALUSTECK_MT_add_menu", icon='PLUGIN')
+
+
+classes = (ALUSTECK_MT_add_menu,) if bpy else tuple()
 
 
 def register_menus():
-    pass
+    if not bpy:
+        return
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    bpy.types.VIEW3D_MT_mesh_add.append(_menu_func)
 
 
 def unregister_menus():
-    pass
+    if not bpy:
+        return
+    bpy.types.VIEW3D_MT_mesh_add.remove(_menu_func)
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)
