@@ -10,35 +10,35 @@ except ImportError:
 
 if HAS_BLENDER:
     class ALUSTECK_MT_add_menu(bpy.types.Menu):
-    """Add menu for Alusteck components."""
-    bl_idname = "ALUSTECK_MT_add_menu"
-    bl_label = "Alusteck Builder"
+        """Add menu for Alusteck components."""
+        bl_idname = "ALUSTECK_MT_add_menu"
+        bl_label = "Alusteck Builder"
 
-    def draw(self, context):  # noqa: D401
-        layout = self.layout
-        
-        # Systems
-        layout.label(text="Systeme:")
-        row = layout.row(align=True)
-        row.label(text="20mm")
-        row.label(text="25mm")
-        row.label(text="30mm")
-        
-        # Components
-        layout.separator()
-        layout.label(text="Komponenten:")
-        col = layout.column(align=True)
-        op = col.operator("alusteck.add_component", text="Profil")
-        op.component_type = "PROFILE"
-        op.system = "25"
-        
-        op = col.operator("alusteck.add_component", text="Verbinder")
-        op.component_type = "CONNECTOR"
-        op.system = "25"
-        
-        op = col.operator("alusteck.add_component", text="Zubehör")
-        op.component_type = "ACCESSORY"
-        op.system = "25"
+        def draw(self, context):  # noqa: D401
+            layout = self.layout
+            
+            # Systems
+            layout.label(text="Systeme:")
+            row = layout.row(align=True)
+            row.label(text="20mm")
+            row.label(text="25mm")
+            row.label(text="30mm")
+            
+            # Components
+            layout.separator()
+            layout.label(text="Komponenten:")
+            col = layout.column(align=True)
+            op = col.operator("alusteck.add_component", text="Profil")
+            op.component_type = "PROFILE"
+            op.system = "25"
+            
+            op = col.operator("alusteck.add_component", text="Verbinder")
+            op.component_type = "CONNECTOR"
+            op.system = "25"
+            
+            op = col.operator("alusteck.add_component", text="Zubehör")
+            op.component_type = "ACCESSORY"
+            op.system = "25"
 
 
 def _menu_func(self, context):

@@ -344,89 +344,112 @@ alusteck_builder/
 
 ## 🛠️ Installation
 
-### Option A: Direkte Installation (Empfohlen für Entwicklung)
+### ⚡ Windows - AUTOMATISCHE INSTALLATION
 
 ```bash
-# 1. Repository klonen
-git clone https://github.com/Nileneb/AlusteckAddonBlender.git
+# Doppelklick auf EINE dieser Dateien:
+#   - install_windows.bat      (für Command Prompt)
+#   - install_windows.ps1      (für PowerShell - modern!)
 
-# 2. Addon-Ordner in Blender Addons-Verzeichnis verlinken/kopieren
-# Windows:
-copy /Y alusteck_builder %APPDATA%\Blender\4.x\scripts\addons\
+# Das Skript macht alles automatisch:
+# ✓ Findet deine Blender Installation
+# ✓ Findet deine Blender Version
+# ✓ Kopiert das Addon ins richtige Verzeichnis
+# ✓ Zeigt dir den Pfad zum Aktivieren
 
-# macOS:
-cp -r alusteck_builder ~/Library/Application\ Support/Blender/4.x/scripts/addons/
-
-# Linux:
-cp -r alusteck_builder ~/.config/blender/4.x/scripts/addons/
-
-# 3. Blender neu starten
-
-# 4. In Blender: Edit > Preferences > Add-ons
-#    Suche nach "Alusteck" und aktiviere das Addon
+# Danach: Blender neustarten + Addon aktivieren (siehe unten)
 ```
 
-### Option B: ZIP-Installation (Einfacher)
+### 📋 Windows - MANUELLE INSTALLATION (Falls Skript nicht funktioniert)
 
 ```bash
-# 1. Repository als ZIP herunterladen
-#    https://github.com/Nileneb/AlusteckAddonBlender/archive/main.zip
-
-# 2. Entpacken
-
-# 3. In Blender: Edit > Preferences > Add-ons > Install from File
-#    Wähle: alusteck_builder/ Ordner (NICHT __init__.py!)
-#    Oder: ZIP-Datei directly
-
-# 4. In der Add-on Liste suchen nach "Alusteck" und aktivieren
+# 1. Öffne Datei-Explorer
+# 2. Adressleiste: %APPDATA%\Blender
+# 3. Dort sollte ein Ordner mit deiner Blender-Version sein:
+#    (z.B. "4.2" oder "4.1")
+# 4. Falls nicht: Ordner manuell mit dieser Nummer erstellen
+# 5. Darin: scripts > addons Ordner navigieren/erstellen
+# 6. alusteck_builder Ordner hierher kopieren
+#
+# Resultat:
+# C:\Users\[DeinBenutzername]\AppData\Roaming\Blender\4.2\scripts\addons\alusteck_builder\
 ```
 
-### API-Key für AI-Features (Optional)
+### 🍎 macOS Installation
 
 ```bash
-# 1. Claude API-Key erhalten
-#    https://www.anthropic.com/
+# Terminal öffnen (Cmd+Space > terminal)
+cd /path/to/AlusteckAddonBlender
+cp -r alusteck_builder ~/Library/Application\ Support/Blender/4.2/scripts/addons/
 
-# 2. In Blender: Edit > Preferences > Add-ons > Alusteck Builder
-#    > Expand preferences dropdown
-#    > "Claude API Key" eingeben
-
-# 3. AI-Features sind jetzt verfügbar:
-#    Sidebar (N) > Alusteck > AI Builder
+# Blender neustarten
 ```
 
-### Fehlerbehebung
-
-**Problem: "Addon konnte nicht importiert werden"**
+### 🐧 Linux Installation
 
 ```bash
-# Lösung 1: Python-Abhängigkeiten prüfen
-python3 -c "import bpy; print('✅ Blender Python OK')"
+cd /path/to/AlusteckAddonBlender
+cp -r alusteck_builder ~/.config/blender/4.2/scripts/addons/
 
-# Lösung 2: Blender Python Path prüfen
-# Windows:
-C:\Program Files\Blender Foundation\Blender 4.x\python\bin\python.exe -m pip list
-
-# Lösung 3: Addon-Ordner permissions
-# Stelle sicher dass alusteck_builder/ Ordner lesbar ist
-chmod -R 755 alusteck_builder/  # Linux/macOS
+# Blender neustarten
 ```
 
-**Problem: "ModuleNotFoundError: No module named 'bpy'"**
+### 🤖 Addon aktivieren (ALLE SYSTEME)
 
-```bash
-# Das ist NORMAL - bpy ist nur in Blender verfügbar
-# Der Code nutzt try/except zum Import und funktioniert trotzdem
-# (Für IDE-Entwicklung/Testing außerhalb von Blender)
+```
+1. Blender öffnen
+2. Edit > Preferences (oben links)
+3. Add-ons (linke Seite)
+4. Suchfeld: "Alusteck" eingeben
+5. Haken bei "Alusteck Builder" setzen
+6. SPEICHERN (Button rechts oben)
+7. Sidebar (N) → Alusteck Tab sollte erscheinen
 ```
 
-**Problem: "Komponenten erscheinen nicht"**
+### 🔑 Claude AI-Key (Optional)
 
 ```bash
-# Lösung: Datenbank-Datei prüfen
-# Stelle sicher dass alusteck_builder/data/ diese Dateien enthält:
-# - alusteck_database.json
-# - snap_rules.json
+# 1. API-Key von https://www.anthropic.com/ holen
+# 2. Blender: Edit > Preferences > Add-ons > Alusteck
+# 3. Expand (▼) > "Claude API Key"
+# 4. Paste und Speichern
+# 5. Sidebar > Alusteck > AI Builder ist jetzt aktiv
+```
+
+### ❌ Probleme auf Windows?
+
+**"Addon wird nicht angezeigt"**
+
+```bash
+# Prüfe: Win+R > %APPDATA%\Blender
+# Ist ein Ordner wie "4.2" da?
+# Darin muss sein: scripts/addons/alusteck_builder/__init__.py
+
+# Falls nicht: Manuell kopieren (siehe oben)
+# Blender KOMPLETT schließen (Task Manager prüfen)
+# Blender neu öffnen
+```
+
+**"Fehler beim Laden"**
+
+```bash
+# Window > Toggle System Console
+# Fehler kopieren und Issue öffnen:
+# https://github.com/Nileneb/AlusteckAddonBlender/issues
+```
+
+**"alusteck_database.json fehlt"**
+
+```bash
+# 1. Blender öffnen
+# 2. System Console (Window > Toggle System Console)
+# 3. Python Console
+# Eingeben:
+import sys
+sys.path.append(r"C:\Users\DEINNAME\Desktop\AlusteckAddonBlender")
+from alusteck_builder.tools import db_updater
+db_updater.update_database()
+# 4. Blender neustarten
 ```
 
 ---

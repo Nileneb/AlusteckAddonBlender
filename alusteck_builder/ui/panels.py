@@ -10,63 +10,63 @@ except ImportError:
 
 if HAS_BLENDER:
     class ALUSTECK_PT_main_panel(bpy.types.Panel):
-    """Main Alusteck Builder sidebar panel."""
-    bl_label = "Alusteck Builder"
-    bl_idname = "ALUSTECK_PT_main_panel"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_category = "Alusteck"
+        """Main Alusteck Builder sidebar panel."""
+        bl_label = "Alusteck Builder"
+        bl_idname = "ALUSTECK_PT_main_panel"
+        bl_space_type = 'VIEW_3D'
+        bl_region_type = 'UI'
+        bl_category = "Alusteck"
 
-    def draw(self, context):  # noqa: D401
-        layout = self.layout
-        layout.label(text="Komponente hinzufügen", icon='ADD')
-        
-        col = layout.column(align=True)
-        col.operator("alusteck.add_component", text="Profil", icon='MOD_BUILD').component_type = "PROFILE"
-        col.operator("alusteck.add_component", text="Verbinder", icon='OUTLINER_OB_LATTICE').component_type = "CONNECTOR"
-        col.operator("alusteck.add_component", text="Zubehör", icon='COMMUNITY').component_type = "ACCESSORY"
-        
-        layout.separator()
-        layout.label(text="Snap Engine", icon='MAGNET')
-        col = layout.column(align=True)
-        col.operator("alusteck.snap_move", text="Snap verschieben", icon='TRANSFORM_MOVE')
-        col.operator("alusteck.validate_structure", text="Struktur validieren", icon='CHECKMARK')
-        
-        layout.separator()
-        layout.label(text="Export", icon='EXPORT')
-        col = layout.column(align=True)
-        col.operator("alusteck.export_bom", text="Stückliste (CSV)", icon='FILE_TEXT')
-        col.operator("alusteck.export_costs", text="Kostenberechnung", icon='MONEY')
-        col.operator("alusteck.export_shop_link", text="Shop-Link", icon='WORLD')
+        def draw(self, context):  # noqa: D401
+            layout = self.layout
+            layout.label(text="Komponente hinzufügen", icon='ADD')
+            
+            col = layout.column(align=True)
+            col.operator("alusteck.add_component", text="Profil", icon='MOD_BUILD').component_type = "PROFILE"
+            col.operator("alusteck.add_component", text="Verbinder", icon='OUTLINER_OB_LATTICE').component_type = "CONNECTOR"
+            col.operator("alusteck.add_component", text="Zubehör", icon='COMMUNITY').component_type = "ACCESSORY"
+            
+            layout.separator()
+            layout.label(text="Snap Engine", icon='MAGNET')
+            col = layout.column(align=True)
+            col.operator("alusteck.snap_move", text="Snap verschieben", icon='TRANSFORM_MOVE')
+            col.operator("alusteck.validate_structure", text="Struktur validieren", icon='CHECKMARK')
+            
+            layout.separator()
+            layout.label(text="Export", icon='EXPORT')
+            col = layout.column(align=True)
+            col.operator("alusteck.export_bom", text="Stückliste (CSV)", icon='FILE_TEXT')
+            col.operator("alusteck.export_costs", text="Kostenberechnung", icon='MONEY')
+            col.operator("alusteck.export_shop_link", text="Shop-Link", icon='WORLD')
 
 if HAS_BLENDER:
     class ALUSTECK_PT_database_panel(bpy.types.Panel):
-    """Database information panel."""
-    bl_label = "Komponenten"
-    bl_idname = "ALUSTECK_PT_database_panel"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_category = "Alusteck"
-    bl_parent_id = "ALUSTECK_PT_main_panel"
-    bl_options = {"DEFAULT_CLOSED"}
+        """Database information panel."""
+        bl_label = "Komponenten"
+        bl_idname = "ALUSTECK_PT_database_panel"
+        bl_space_type = 'VIEW_3D'
+        bl_region_type = 'UI'
+        bl_category = "Alusteck"
+        bl_parent_id = "ALUSTECK_PT_main_panel"
+        bl_options = {"DEFAULT_CLOSED"}
 
-    def draw(self, context):  # noqa: D401
-        layout = self.layout
-        layout.label(text="Verfügbare Komponenten:")
-        
-        # Load database info (placeholder)
-        try:
-            from alusteck_builder.core import database
-            db = database.load_json("alusteck_database.json")
+        def draw(self, context):  # noqa: D401
+            layout = self.layout
+            layout.label(text="Verfügbare Komponenten:")
             
-            if db and "systems" in db:
-                for system_name in ["20mm", "25mm", "30mm"]:
-                    if system_name in db["systems"]:
-                        box = layout.box()
-                        system = db["systems"][system_name]
-                        box.label(text=system_name, icon='CUBE')
-        except Exception as e:
-            layout.label(text=f"Fehler beim Laden: {e}")
+            # Load database info (placeholder)
+            try:
+                from alusteck_builder.core import database
+                db = database.load_json("alusteck_database.json")
+                
+                if db and "systems" in db:
+                    for system_name in ["20mm", "25mm", "30mm"]:
+                        if system_name in db["systems"]:
+                            box = layout.box()
+                            system = db["systems"][system_name]
+                            box.label(text=system_name, icon='CUBE')
+            except Exception as e:
+                layout.label(text=f"Fehler beim Laden: {e}")
 
 
 if HAS_BLENDER:
