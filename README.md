@@ -22,63 +22,23 @@ Ein **intelligentes Baukastensystem** direkt in Blender, das:
 ## 📐 System-Architektur
 
 ```mermaid
-┌─────────────────────────────────────────────────────────────────────────┐
-│                        ALUSTECK BUILDER v2.0                            │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                         │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐                 │
-│  │   20mm      │    │   25mm      │    │   30mm      │                 │
-│  │  SYSTEM     │    │  SYSTEM     │    │  SYSTEM     │   DATENBANK    │
-│  └──────┬──────┘    └──────┬──────┘    └──────┬──────┘   (JSON/SQLite) │
-│         │                  │                  │                         │
-│         └──────────────────┼──────────────────┘                         │
-│                            │                                            │
-│                            ▼                                            │
-│  ┌─────────────────────────────────────────────────────────────────┐   │
-│  │                    KOMPONENTEN-REGISTRY                          │   │
-│  │  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐             │   │
-│  │  │ Profile │  │Verbinder│  │ Zubehör │  │  Stege  │             │   │
-│  │  │(Hollow) │  │(2-6Way) │  │(Kappen) │  │(A/B/C)  │             │   │
-│  │  └─────────┘  └─────────┘  └─────────┘  └─────────┘             │   │
-│  └─────────────────────────────────────────────────────────────────┘   │
-│                            │                                            │
-│                            ▼                                            │
-│  ┌─────────────────────────────────────────────────────────────────┐   │
-│  │                      SNAP ENGINE                                 │   │
-│  │                                                                  │   │
-│  │   ┌──────────────┐    ┌──────────────┐    ┌──────────────┐      │   │
-│  │   │ Verbindungs- │    │  Kollisions- │    │    Steg-     │      │   │
-│  │   │   Regeln     │───▶│   Prüfung    │───▶│  Kompatibil. │      │   │
-│  │   └──────────────┘    └──────────────┘    └──────────────┘      │   │
-│  │                                                                  │   │
-│  │   • Max. Anschlüsse pro Verbinder                               │   │
-│  │   • Zapfen-Einstecktiefe validieren                             │   │
-│  │   • Überlappungen verhindern                                    │   │
-│  │   • Steg-Richtung beachten                                      │   │
-│  └─────────────────────────────────────────────────────────────────┘   │
-│                            │                                            │
-│                            ▼                                            │
-│  ┌─────────────────────────────────────────────────────────────────┐   │
-│  │                    AI INTEGRATION                                │   │
-│  │                                                                  │   │
-│  │   ┌──────────────┐    ┌──────────────┐    ┌──────────────┐      │   │
-│  │   │    Chat      │    │   Skizzen-   │    │    Best      │      │   │
-│  │   │   Input      │───▶│   Analyse    │───▶│   Practice   │      │   │
-│  │   └──────────────┘    └──────────────┘    └──────────────┘      │   │
-│  │                                                                  │   │
-│  │   "Baue ein Regal 2m x 0.5m x 1.8m"  ──▶  🧊 3D-Modell          │   │
-│  │   [Skizze hochladen]                  ──▶  🧊 3D-Modell          │   │
-│  └─────────────────────────────────────────────────────────────────┘   │
-│                            │                                            │
-│                            ▼                                            │
-│  ┌─────────────────────────────────────────────────────────────────┐   │
-│  │                       EXPORT                                     │   │
-│  │                                                                  │   │
-│  │   📋 Stückliste    💰 Kalkulation    📦 3D-Export    🛒 Shop    │   │
-│  │      (CSV/PDF)        (Excel)         (GLTF/STL)      (Link)    │   │
-│  └─────────────────────────────────────────────────────────────────┘   │
-│                                                                         │
-└─────────────────────────────────────────────────────────────────────────┘
+flowchart TD
+  DB[(Datenbank\nJSON/SQLite)]
+  SYS20[20mm System]
+  SYS25[25mm System]
+  SYS30[30mm System]
+  REG[Komponenten-Registry\nProfile / Verbinder / Zubehör / Stege]
+  SNAP[Snap Engine\nRegeln / Kollision / Steg-Kompatibilität]
+  AI[AI Integration\nChat / Skizze / Best Practice]
+  EXP[Export\nStückliste / Kosten / 3D-Export / Shop]
+
+  SYS20 --> DB
+  SYS25 --> DB
+  SYS30 --> DB
+  DB --> REG
+  REG --> SNAP
+  SNAP --> AI
+  SNAP --> EXP
 ```
 
 ---
@@ -350,13 +310,13 @@ alusteck_builder/
 - [x] Verbinder-Mesh-Generator (2-6 Wege)
 - [x] Material-System
 
-### Phase 2: Datenbank 🔄
+### Phase 2: Datenbank ✅
 
-- [ ] JSON-Schema definieren
-- [ ] Scraper für Produktdaten
-- [ ] Alle 3 Systeme (20/25/30mm) erfassen
-- [ ] Steg-Varianten integrieren
-- [ ] Schnittbild-Optionen
+- [x] JSON-Schema definieren
+- [x] Scraper für Produktdaten
+- [x] Alle 3 Systeme (20/25/30mm) erfassen
+- [x] Steg-Varianten integrieren
+- [x] Schnittbild-Optionen
 
 ### Phase 3: Snap-Engine ✅
 
