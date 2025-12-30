@@ -13,12 +13,21 @@ bl_info = {
 # Lazy imports to keep registration light during scaffolding
 def register():
     """Blender registration hook."""
-    # Modules will be wired in once implementations are ready
+    try:
+        from alusteck_builder import ui
+    except ImportError:
+        return None
+    ui.register()
     return None
 
 
 def unregister():
     """Blender unregistration hook."""
+    try:
+        from alusteck_builder import ui
+    except ImportError:
+        return None
+    ui.unregister()
     return None
 
 
