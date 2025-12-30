@@ -306,33 +306,34 @@ alusteck_builder/
 ### Phase 1: Foundation ✅
 
 - [x] Basis-Addon Struktur
-- [x] Profil-Mesh-Generator (Hohlkörper)
-- [x] Verbinder-Mesh-Generator (2-6 Wege)
-- [x] Material-System
+- [x] Profil-Mesh-Generator (Hohlkörper mit BMesh)
+- [x] Verbinder-Mesh-Generator (2-6 Wege mit Zapfen)
+- [x] Material-System & Rendering
 
 ### Phase 2: Datenbank ✅
 
 - [x] JSON-Schema definieren
-- [x] Scraper für Produktdaten
+- [x] Scraper für Produktdaten (alusteck.de)
 - [x] Alle 3 Systeme (20/25/30mm) erfassen
 - [x] Steg-Varianten integrieren
-- [x] Schnittbild-Optionen
+- [x] Preise & Verfügbarkeit
 
 ### Phase 3: Snap-Engine ✅
 
 - [x] Port-basiertes Snap-System
-- [x] Kollisionserkennung
+- [x] Echtzeit Snap-Vorschau (GPU Shader)
 - [x] Steg-Kompatibilitätsprüfung
-- [x] Visuelle Snap-Vorschau (Highlighting)
+- [x] Konstruktions-Validierung (DFS Graph Analysis)
+- [x] Modal Operator (Race-Condition Fixes)
 
-### Phase 4: Export & Polish 📋
+### Phase 4: Export & Polish ✅
 
-- [ ] Stücklisten-Export (CSV/PDF)
-- [ ] Kostenberechnung
-- [ ] Direktlink zum Alusteck-Warenkorb
-- [ ] Preset-Bibliothek
+- [x] Stücklisten-Export (CSV/JSON)
+- [x] Kostenberechnung mit Margin
+- [x] Direktlink zum Alusteck-Warenkorb
+- [ ] Preset-Bibliothek (ausgelagert auf Phase 5+)
 
-### Phase 5: AI-Integration 📋
+### Phase 5: AI-Integration 🚀
 
 - [ ] Chat-Panel in Blender Sidebar
 - [ ] Claude API Integration
@@ -343,19 +344,89 @@ alusteck_builder/
 
 ## 🛠️ Installation
 
+### Option A: Direkte Installation (Empfohlen für Entwicklung)
+
 ```bash
 # 1. Repository klonen
-git clone https://github.com/user/alusteck-builder.git
+git clone https://github.com/Nileneb/AlusteckAddonBlender.git
 
-# 2. In Blender installieren
-#    Edit > Preferences > Add-ons > Install
-#    Wähle: alusteck_builder/__init__.py
+# 2. Addon-Ordner in Blender Addons-Verzeichnis verlinken/kopieren
+# Windows:
+copy /Y alusteck_builder %APPDATA%\Blender\4.x\scripts\addons\
 
-# 3. Addon aktivieren
-#    Häkchen bei "Alusteck Builder"
+# macOS:
+cp -r alusteck_builder ~/Library/Application\ Support/Blender/4.x/scripts/addons/
 
-# 4. (Optional) API-Key für AI-Features
-#    Addon-Preferences > Claude API Key eingeben
+# Linux:
+cp -r alusteck_builder ~/.config/blender/4.x/scripts/addons/
+
+# 3. Blender neu starten
+
+# 4. In Blender: Edit > Preferences > Add-ons
+#    Suche nach "Alusteck" und aktiviere das Addon
+```
+
+### Option B: ZIP-Installation (Einfacher)
+
+```bash
+# 1. Repository als ZIP herunterladen
+#    https://github.com/Nileneb/AlusteckAddonBlender/archive/main.zip
+
+# 2. Entpacken
+
+# 3. In Blender: Edit > Preferences > Add-ons > Install from File
+#    Wähle: alusteck_builder/ Ordner (NICHT __init__.py!)
+#    Oder: ZIP-Datei directly
+
+# 4. In der Add-on Liste suchen nach "Alusteck" und aktivieren
+```
+
+### API-Key für AI-Features (Optional)
+
+```bash
+# 1. Claude API-Key erhalten
+#    https://www.anthropic.com/
+
+# 2. In Blender: Edit > Preferences > Add-ons > Alusteck Builder
+#    > Expand preferences dropdown
+#    > "Claude API Key" eingeben
+
+# 3. AI-Features sind jetzt verfügbar:
+#    Sidebar (N) > Alusteck > AI Builder
+```
+
+### Fehlerbehebung
+
+**Problem: "Addon konnte nicht importiert werden"**
+
+```bash
+# Lösung 1: Python-Abhängigkeiten prüfen
+python3 -c "import bpy; print('✅ Blender Python OK')"
+
+# Lösung 2: Blender Python Path prüfen
+# Windows:
+C:\Program Files\Blender Foundation\Blender 4.x\python\bin\python.exe -m pip list
+
+# Lösung 3: Addon-Ordner permissions
+# Stelle sicher dass alusteck_builder/ Ordner lesbar ist
+chmod -R 755 alusteck_builder/  # Linux/macOS
+```
+
+**Problem: "ModuleNotFoundError: No module named 'bpy'"**
+
+```bash
+# Das ist NORMAL - bpy ist nur in Blender verfügbar
+# Der Code nutzt try/except zum Import und funktioniert trotzdem
+# (Für IDE-Entwicklung/Testing außerhalb von Blender)
+```
+
+**Problem: "Komponenten erscheinen nicht"**
+
+```bash
+# Lösung: Datenbank-Datei prüfen
+# Stelle sicher dass alusteck_builder/data/ diese Dateien enthält:
+# - alusteck_database.json
+# - snap_rules.json
 ```
 
 ---
@@ -365,37 +436,133 @@ git clone https://github.com/user/alusteck-builder.git
 ### Komponenten hinzufügen
 
 ```
-Shift+A > Mesh > Alusteck > [System wählen] > [Komponente]
+Shift+A > Mesh > Alusteck > [System wählen: 20/25/30mm] > [Komponente]
+
+Verfügbare Komponenten:
+├── Profile (Vierkantrohr)
+│   ├── Standard (ohne Steg)
+│   ├── Mit Innenwinkelstek
+│   ├── Mit Gegenuebersteg
+│   └── Mit Aussenwinkelstek
+├── Verbinder (2-6 Wege)
+│   ├── Gerade (2 Wege)
+│   ├── Winkel (2 Wege)
+│   ├── T-Stück (3 Wege)
+│   ├── Eckverbinder (3 Wege)
+│   ├── Kreuz (4 Wege)
+│   └── Würfel (6 Wege)
+└── Zubehör
+    ├── Abdeckkappen
+    ├── Gleiter
+    └── Stellfüße
 ```
 
-### Snap-Modus
+### Snap-Engine (Komponenten verbinden)
 
 ```
-1. Verbinder platzieren
-2. Profil auswählen
-3. G (Grab) + Mausbewegung
-4. Automatischer Snap an freie Ports
+1. Verbinder platzieren (Shift+A > Alusteck Verbinder)
+2. Profil auswählen (linksklick)
+3. G (Grab) drücken + Mausbewegung
+   → Grüne Kreise zeigen verfügbare Snap-Ports
+4. Linksklick zum Snap ausführen (Profile wird automatisch ausgerichtet)
+5. ESC / Rechtsklick zum Abbrechen
+
+Snap-Regeln:
+✓ Automatische Drehung in Port-Richtung
+✓ Steg-Kompatibilität wird geprüft
+✓ Port-Belegung wird überwacht
+✓ Kollisionen werden erkannt
 ```
 
-### AI-Konstruktion
+### Konstruktion validieren
+
+```
+1. Baumstruktur fertig bauen
+2. In der Sidebar: Alusteck > Validate Structure
+   → Reports: Fehler / Warnungen / Hinweise
+
+Überprüft:
+- Zu lange Profile ohne Mittelstütze
+- Überlastete Ports (mehr als 1 Profil/Port)
+- Unverbundene Komponenten
+- Strukturelle Stabilität (Graph-basiert)
+```
+
+### Stückliste & Kosten exportieren
+
+```
+1. Konstruktion fertig
+2. Sidebar > Alusteck > Export
+
+   Verfügbare Exporte:
+   - 📊 BOM (CSV/JSON)      → Stückliste mit Artikelnummern & Preisen
+   - 💰 Cost Report         → Kostenaufschlüsselung (nach Typ)
+   - 🛒 Shop Link           → Direktlink zu alusteck.de mit vorausgefülltem Warenkorb
+
+3. Ergebnisse werden in Home-Verzeichnis gespeichert:
+   ~/Alusteck_BOM.csv
+   ~/Alusteck_Costs.txt
+   (Shop-Link wird in Konsole angezeigt)
+```
+
+### AI-Konstruktion (Phase 5 - in Arbeit)
 
 ```
 1. Sidebar (N) > Alusteck > AI Builder
-2. Beschreibung eingeben oder Skizze hochladen
+2. Natürlichsprachliche Beschreibung eingeben:
+
+   Beispiele:
+   "Baue ein Regal mit 3 Böden, 80cm breit, 40cm tief, 180cm hoch"
+   "Konstruiere einen Tisch mit 4 Beinen und Mittelstützen"
+   "Erstelle einen modularen Rahmen 1000x1000mm"
+
 3. "Generieren" klicken
-4. Vorschlag akzeptieren/anpassen
+4. AI generiert Best-Practice Konstruktion
+5. Vorschlag akzeptieren oder anpassen
+
+⚠️ Benötigt: Claude API-Key in Addon-Preferences
 ```
 
 ---
 
 ## 🤝 Contributing
 
-Contributions welcome! Besonders gesucht:
+Contributions & Bug Reports welcome!
 
-- Produktdaten-Vervollständigung
-- Snap-Algorithmus-Optimierung
-- UI/UX Verbesserungen
-- Preset-Bibliothek erweitern
+### Aktuelle Priorities:
+
+1. **Phase 5: AI Integration** - Claude-basierte Struktur-Generierung
+2. **Preset-Bibliothek** - Vorgefertigte Konstruktionen
+3. **Performance** - Snap-Engine Optimierung für große Szenen
+4. **UI/UX** - Bessere Feedback-Meldungen
+
+### Wie beitragen:
+
+```bash
+# 1. Fork & Clone
+git clone https://github.com/Nileneb/AlusteckAddonBlender.git
+cd AlusteckAddonBlender
+
+# 2. Feature Branch erstellen
+git checkout -b feature/dein-feature
+
+# 3. Code & Tests
+# ... deine Änderungen ...
+
+# 4. Commit & Push
+git add .
+git commit -m "feat: deine Änderung"
+git push origin feature/dein-feature
+
+# 5. Pull Request erstellen auf GitHub
+```
+
+### Code-Style:
+
+- Python 3.10+
+- Docstrings für alle Funktionen
+- Type Hints wo sinnvoll
+- Black formatter (88 char line length)
 
 ---
 
@@ -405,8 +572,17 @@ MIT License - Siehe [LICENSE](LICENSE)
 
 ---
 
-## 🔗 Links
+## 🔗 Links & Ressourcen
 
-- [Alusteck Shop](https://www.alusteck.de/)
-- [Blender](https://www.blender.org/)
-- [Claude API](https://www.anthropic.com/)
+- 🛒 [Alusteck Shop](https://www.alusteck.de/) - Offizielle Komponenten
+- 🎨 [Blender 4.x](https://www.blender.org/) - 3D Software
+- 🤖 [Claude API](https://www.anthropic.com/) - AI Integration
+- 📚 [Blender Python API](https://docs.blender.org/api/current/) - Addon Development
+
+---
+
+## 📞 Support & Issues
+
+Fragen oder Bugs? → [GitHub Issues](https://github.com/Nileneb/AlusteckAddonBlender/issues)
+
+---
