@@ -11,6 +11,7 @@
 ## 🎯 Vision
 
 Ein **intelligentes Baukastensystem** direkt in Blender, das:
+
 - Exakte Alusteck-Komponenten mit echten Maßen bereitstellt
 - Automatisches Snapping mit physikalisch korrekten Verbindungen ermöglicht
 - Per **Chat oder Skizze** komplette 3D-Strukturen generiert
@@ -156,7 +157,7 @@ alusteck_builder/
     "source": "alusteck.de",
     "last_updated": "2025-01-15"
   },
-  
+
   "systems": {
     "20mm": { ... },
     "25mm": {
@@ -164,7 +165,7 @@ alusteck_builder/
         "outer_mm": 25.0,
         "wall_mm": 1.5,
         "inner_mm": 22.0,
-        
+
         "variants": [
           {
             "id": "VK25-STD",
@@ -185,14 +186,14 @@ alusteck_builder/
             "price_per_m": 13.77
           }
         ],
-        
+
         "schnittbilder": {
           "A": {"name": "Gerade", "surcharge": 0.48},
           "B": {"name": "45° Gehrung", "surcharge": 0.48},
           "C": {"name": "Doppel-Gehrung", "surcharge": 0.69}
         }
       },
-      
+
       "connectors": [
         {
           "id": "2D25K",
@@ -221,12 +222,12 @@ alusteck_builder/
           ]
         }
       ],
-      
+
       "accessories": [ ... ]
     },
     "30mm": { ... }
   },
-  
+
   "snap_rules": {
     "socket_tolerance_mm": 0.5,
     "auto_align": true,
@@ -262,7 +263,7 @@ alusteck_builder/
 ### Snap-Regeln
 
 | Verbinder-Typ | Max. Ports | Richtungen | Kollisionsprüfung |
-|---------------|------------|------------|-------------------|
+| ------------- | ---------- | ---------- | ----------------- |
 | Gerade (2D)   | 2          | ±Z         | Nein              |
 | Winkel (2W)   | 2          | +X, +Y     | Ja                |
 | T-Stück (3T)  | 3          | ±X, +Y     | Ja                |
@@ -274,13 +275,13 @@ alusteck_builder/
 
 ```
    INNENWINKEL-STEG              GEGENÜBER-STEG
-        
+
       ┌─────┐                       ┌─────┐
       │█████│ ← Steg                │█│ │█│ ← Stege
       │█   █│                       │█│ │█│
       │█████│ ← Steg                │█│ │█│
       └─────┘                       └─────┘
-        
+
    Blockiert: +X, +Y            Blockiert: ±X
    Erlaubt: -X, -Y, ±Z          Erlaubt: ±Y, ±Z
 ```
@@ -343,12 +344,14 @@ alusteck_builder/
 ## 🚀 Roadmap
 
 ### Phase 1: Foundation ✅
+
 - [x] Basis-Addon Struktur
 - [x] Profil-Mesh-Generator (Hohlkörper)
 - [x] Verbinder-Mesh-Generator (2-6 Wege)
 - [x] Material-System
 
 ### Phase 2: Datenbank 🔄
+
 - [ ] JSON-Schema definieren
 - [ ] Scraper für Produktdaten
 - [ ] Alle 3 Systeme (20/25/30mm) erfassen
@@ -356,22 +359,25 @@ alusteck_builder/
 - [ ] Schnittbild-Optionen
 
 ### Phase 3: Snap-Engine 📋
+
 - [ ] Port-basiertes Snap-System
 - [ ] Kollisionserkennung
 - [ ] Steg-Kompatibilitätsprüfung
 - [ ] Visuelle Snap-Vorschau (Highlighting)
 
-### Phase 4: AI-Integration 📋
-- [ ] Chat-Panel in Blender Sidebar
-- [ ] Claude API Integration
-- [ ] Text → Struktur Konvertierung
-- [ ] Best-Practice Vorschläge
+### Phase 4: Export & Polish 📋
 
-### Phase 5: Export & Polish 📋
 - [ ] Stücklisten-Export (CSV/PDF)
 - [ ] Kostenberechnung
 - [ ] Direktlink zum Alusteck-Warenkorb
 - [ ] Preset-Bibliothek
+
+### Phase 5: AI-Integration 📋
+
+- [ ] Chat-Panel in Blender Sidebar
+- [ ] Claude API Integration
+- [ ] Text → Struktur Konvertierung
+- [ ] Best-Practice Vorschläge
 
 ---
 
@@ -397,11 +403,13 @@ git clone https://github.com/user/alusteck-builder.git
 ## 📖 Verwendung
 
 ### Komponenten hinzufügen
+
 ```
 Shift+A > Mesh > Alusteck > [System wählen] > [Komponente]
 ```
 
 ### Snap-Modus
+
 ```
 1. Verbinder platzieren
 2. Profil auswählen
@@ -410,6 +418,7 @@ Shift+A > Mesh > Alusteck > [System wählen] > [Komponente]
 ```
 
 ### AI-Konstruktion
+
 ```
 1. Sidebar (N) > Alusteck > AI Builder
 2. Beschreibung eingeben oder Skizze hochladen
@@ -422,8 +431,9 @@ Shift+A > Mesh > Alusteck > [System wählen] > [Komponente]
 ## 🤝 Contributing
 
 Contributions welcome! Besonders gesucht:
+
 - Produktdaten-Vervollständigung
-- Snap-Algorithmus-Optimierung  
+- Snap-Algorithmus-Optimierung
 - UI/UX Verbesserungen
 - Preset-Bibliothek erweitern
 

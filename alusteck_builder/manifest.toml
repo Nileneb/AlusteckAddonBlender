@@ -1,0 +1,8 @@
+schema_version = "1.0.0"
+id = "alusteck_builder"
+version = "0.1.0"
+name = "Alusteck Builder"
+blender_version_min = "4.0.0"
+author = "Alusteck"
+license = "MIT"
+description = "Parametrisches CAD-System für das Alusteck Stecksystem mit Snap-Engine und AI-Support"
