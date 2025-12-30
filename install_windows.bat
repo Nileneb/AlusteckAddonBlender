@@ -21,6 +21,7 @@ set "SEARCH_PATHS[0]=%ProgramFiles%\Blender Foundation"
 set "SEARCH_PATHS[1]=%ProgramFiles(x86)%\Blender Foundation"
 set "SEARCH_PATHS[2]=%LocalAppData%\Programs\Blender"
 set "SEARCH_PATHS[3]=C:\Blender"
+set "SEARCH_PATHS[4]=C:\Program Files\WindowsApps\BlenderFoundation.Blender_5.0.1.0_x64__ppwjx1n5r4v9t\Blender"
 
 echo [1] Suche nach Blender Installationen...
 echo.

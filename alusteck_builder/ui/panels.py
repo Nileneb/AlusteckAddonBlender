@@ -22,14 +22,13 @@ if HAS_BLENDER:
             layout.label(text="Komponente hinzufügen", icon='ADD')
             
             col = layout.column(align=True)
-            col.operator("alusteck.add_component", text="Profil", icon='MOD_BUILD').component_type = "PROFILE"
-            col.operator("alusteck.add_component", text="Verbinder", icon='OUTLINER_OB_LATTICE').component_type = "CONNECTOR"
-            col.operator("alusteck.add_component", text="Zubehör", icon='COMMUNITY').component_type = "ACCESSORY"
+            # Use the menu instead of direct operator calls (proper Blender 5.0 approach)
+            col.menu("ALUSTECK_MT_add_menu", text="Komponenten", icon='PLUGIN')
             
             layout.separator()
-            layout.label(text="Snap Engine", icon='MAGNET')
+            layout.label(text="Snap Engine", icon='SNAP_ON')
             col = layout.column(align=True)
-            col.operator("alusteck.snap_move", text="Snap verschieben", icon='TRANSFORM_MOVE')
+            col.operator("alusteck.snap_move", text="Snap verschieben", icon='ARROW_LEFTRIGHT')
             col.operator("alusteck.validate_structure", text="Struktur validieren", icon='CHECKMARK')
             
             layout.separator()

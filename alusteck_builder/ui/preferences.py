@@ -44,7 +44,7 @@ if HAS_BLENDER:
             box.prop(self, "claude_api_key")
             
             box = layout.box()
-            box.label(text="Snap Engine", icon='MAGNET')
+            box.label(text="Snap Engine", icon='SNAP_ON')
             box.prop(self, "snap_distance_mm")
             box.prop(self, "auto_validate")
 

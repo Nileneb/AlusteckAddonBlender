@@ -28,16 +28,21 @@ if HAS_BLENDER:
             layout.separator()
             layout.label(text="Komponenten:")
             col = layout.column(align=True)
+            
+            # Use properties dict to pass operator arguments (Blender 5.0 compatible)
             op = col.operator("alusteck.add_component", text="Profil")
-            op.component_type = "PROFILE"
-            op.system = "25"
+            if op:
+                op.component_type = "PROFILE"
+                op.system = "25"
             
             op = col.operator("alusteck.add_component", text="Verbinder")
-            op.component_type = "CONNECTOR"
-            op.system = "25"
+            if op:
+                op.component_type = "CONNECTOR"
+                op.system = "25"
             
             op = col.operator("alusteck.add_component", text="Zubehör")
-            op.component_type = "ACCESSORY"
+            if op:
+                op.component_type = "ACCESSORY"
             op.system = "25"
 
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # ============================================
 # ALUSTECK WEB SCRAPER
 # Fetcht alle Produktdaten von alusteck.de
