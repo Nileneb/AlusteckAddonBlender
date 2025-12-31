@@ -13,8 +13,8 @@ from .profile import create_profile_mesh
 from .connector import create_connector_mesh
 from .materials import (
     get_or_create_material,
-    MATERIAL_ALUMINUM,
-    MATERIAL_POLYAMIDE,
+    get_aluminum_material,
+    get_connector_material,
 )
 
 __all__ = [
@@ -24,6 +24,6 @@ __all__ = [
     
     # Materials
     "get_or_create_material",
-    "MATERIAL_ALUMINUM",
-    "MATERIAL_POLYAMIDE",
+    "get_aluminum_material",
+    "get_connector_material",
 ]

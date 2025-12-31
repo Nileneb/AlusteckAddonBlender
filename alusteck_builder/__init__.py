@@ -27,16 +27,24 @@ from .ui import register as register_ui, unregister as unregister_ui
 
 def _load_database():
     """Lädt Alusteck-Datenbank beim Addon-Start"""
-    from .core import load_components
     try:
+        from .core import load_components
         data = load_components()
-        if data:
-            registry = get_registry()
-            total = len(registry.components)
+        
+        if data and data.get("kategorien"):
+            # Zähle Komponenten
+            total = 0
+            for system in data.get("kategorien", {}).values():
+                total += len(system.get("profile", []))
+                total += len(system.get("verbinder", []))
             return data, total
+        
+        print("⚠️  Datenbank ist leer oder ungültig")
         return None, 0
     except Exception as e:
         print(f"❌ Fehler beim Laden der Datenbank: {e}")
+        import traceback
+        traceback.print_exc()
         return None, 0
 
 ALUSTECK_DATABASE, _COMPONENT_COUNT = _load_database()

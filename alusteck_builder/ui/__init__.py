@@ -83,14 +83,3 @@ def unregister():
     unregister_operators()
     unregister_panels()
 
-def register():
-    """Registriert alle UI-Klassen"""
-    register_panels()
-    register_operators()
-
-
-def unregister():
-    """Unregistriert alle UI-Klassen"""
-    unregister_operators()
-    unregister_panels()
-

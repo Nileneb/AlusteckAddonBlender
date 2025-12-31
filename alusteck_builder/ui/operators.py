@@ -31,28 +31,35 @@ class ALUSTECK_OT_add_profile(Operator):
     bl_label = "Vierkantrohr"
     bl_options = {'REGISTER', 'UNDO'}
     
-    length: float = FloatProperty(
+    artikel_nr: StringProperty(
+        name="Artikel-Nr",
+        description="Artikel Nummer des Profils",
+        default=""
+    )
+    
+    kategorie: StringProperty(
+        name="Kategorie",
+        description="System Kategorie (25mm, 40mm, etc)",
+        default="25mm"
+    )
+    
+    length: FloatProperty(
         name="Länge",
         description="Profillänge in Metern",
         default=1.0,
         min=0.01,
         max=6.0,
-        unit='LENGTH',
+        unit='LENGTH'
     )
-    
-    artikel_nr: str = ""
-    kategorie: str = "25mm"
     
     def execute(self, context):
         from .. import ALUSTECK_DATABASE
         from ..components.materials import get_aluminum_material
-        from ..components.profile import create_profile_mesh as create_profile_bmesh
         
         if not ALUSTECK_DATABASE:
-            self.report({'ERROR'}, "Alusteck Datenbank nicht verfügbar!")
+            self.report({'ERROR'}, "Datenbank nicht verfügbar!")
             return {'CANCELLED'}
         
-        # Finde Profil in Datenbank
         profile_data = None
         for profil in ALUSTECK_DATABASE.get("kategorien", {}).get(self.kategorie, {}).get("profile", []):
             if profil.get("artikel_nr") == self.artikel_nr:
@@ -60,35 +67,58 @@ class ALUSTECK_OT_add_profile(Operator):
                 break
         
         if not profile_data:
-            self.report({'ERROR'}, f"Profil {self.artikel_nr} nicht gefunden!")
+            self.report({'ERROR'}, f"Profil nicht gefunden")
             return {'CANCELLED'}
         
-        # Konvertiere von mm zu m
-        outer = profile_data["aussen_mm"] / 1000
-        wall = profile_data["wandstaerke_mm"] / 1000
-        
-        bm = create_profile_bmesh(outer, wall, self.length)
-        
-        mesh = bpy.data.meshes.new(f"Alusteck_{profile_data['artikel_nr']}")
-        bm.to_mesh(mesh)
-        bm.free()
-        
-        obj = bpy.data.objects.new(mesh.name, mesh)
-        obj.data.materials.append(get_aluminum_material())
-        
-        # Custom Properties für Stückliste
-        obj["alusteck_type"] = "profile"
-        obj["alusteck_artikel_nr"] = profile_data["artikel_nr"]
-        obj["alusteck_kategorie"] = self.kategorie
-        obj["alusteck_length"] = self.length
-        obj["alusteck_name"] = profile_data["name"]
-        obj["alusteck_price"] = profile_data.get("preis_pro_meter", 5.90)
-        
-        context.collection.objects.link(obj)
-        context.view_layer.objects.active = obj
-        obj.select_set(True)
-        
-        return {'FINISHED'}
+        try:
+            import bmesh
+            
+            # Create simple box mesh
+            bm = bmesh.new()
+            size = 0.025 / 2
+            verts = [
+                bm.verts.new((-size, -size, 0)),
+                bm.verts.new((size, -size, 0)),
+                bm.verts.new((size, size, 0)),
+                bm.verts.new((-size, size, 0)),
+                bm.verts.new((-size, -size, self.length)),
+                bm.verts.new((size, -size, self.length)),
+                bm.verts.new((size, size, self.length)),
+                bm.verts.new((-size, size, self.length)),
+            ]
+            
+            for f in [
+                [verts[0], verts[1], verts[2], verts[3]],
+                [verts[4], verts[7], verts[6], verts[5]],
+                [verts[0], verts[4], verts[5], verts[1]],
+                [verts[2], verts[6], verts[7], verts[3]],
+                [verts[0], verts[3], verts[7], verts[4]],
+                [verts[1], verts[5], verts[6], verts[2]],
+            ]:
+                bm.faces.new(f)
+            
+            mesh = bpy.data.meshes.new(f"Profile_{self.artikel_nr}")
+            bm.to_mesh(mesh)
+            bm.free()
+            
+            obj = bpy.data.objects.new(mesh.name, mesh)
+            obj.data.materials.append(get_aluminum_material())
+            
+            obj["alusteck_type"] = "profile"
+            obj["alusteck_artikel_nr"] = profile_data["artikel_nr"]
+            obj["alusteck_kategorie"] = self.kategorie
+            obj["alusteck_length"] = self.length
+            obj["alusteck_name"] = profile_data["name"]
+            obj["alusteck_price"] = profile_data.get("preis_pro_meter", 5.90)
+            
+            context.collection.objects.link(obj)
+            context.view_layer.objects.active = obj
+            obj.select_set(True)
+            
+            return {'FINISHED'}
+        except Exception as e:
+            self.report({'ERROR'}, f"Error: {e}")
+            return {'CANCELLED'}
 
 
 class ALUSTECK_OT_add_connector(Operator):
@@ -97,19 +127,26 @@ class ALUSTECK_OT_add_connector(Operator):
     bl_label = "Steckverbinder"
     bl_options = {'REGISTER', 'UNDO'}
     
-    artikel_nr: str = ""
-    kategorie: str = "25mm"
+    artikel_nr: StringProperty(
+        name="Artikel-Nr",
+        description="Artikel Nummer des Verbinders",
+        default=""
+    )
+    
+    kategorie: StringProperty(
+        name="Kategorie",
+        description="System Kategorie (25mm, 40mm, etc)",
+        default="25mm"
+    )
     
     def execute(self, context):
         from .. import ALUSTECK_DATABASE
         from ..components.materials import get_connector_material
-        from ..components.connector import create_connector_cube
         
         if not ALUSTECK_DATABASE:
-            self.report({'ERROR'}, "Alusteck Datenbank nicht verfügbar!")
+            self.report({'ERROR'}, "Datenbank nicht verfügbar!")
             return {'CANCELLED'}
         
-        # Finde Verbinder in Datenbank
         connector_data = None
         for verb in ALUSTECK_DATABASE.get("kategorien", {}).get(self.kategorie, {}).get("verbinder", []):
             if verb.get("artikel_nr") == self.artikel_nr:
@@ -117,33 +154,57 @@ class ALUSTECK_OT_add_connector(Operator):
                 break
         
         if not connector_data:
-            self.report({'ERROR'}, f"Verbinder {self.artikel_nr} nicht gefunden!")
+            self.report({'ERROR'}, f"Verbinder nicht gefunden")
             return {'CANCELLED'}
         
-        directions = connector_data.get("anzahl_wege", 6)
-        size = connector_data.get("zapfen_laenge_mm", 25.0) / 1000  # mm zu m
-        
-        bm = create_connector_cube(size, directions)
-        
-        mesh = bpy.data.meshes.new(f"Alusteck_{connector_data['artikel_nr']}")
-        bm.to_mesh(mesh)
-        bm.free()
-        
-        obj = bpy.data.objects.new(mesh.name, mesh)
-        obj.data.materials.append(get_connector_material())
-        
-        obj["alusteck_type"] = "connector"
-        obj["alusteck_artikel_nr"] = connector_data["artikel_nr"]
-        obj["alusteck_kategorie"] = self.kategorie
-        obj["alusteck_ways"] = directions
-        obj["alusteck_name"] = connector_data["name"]
-        obj["alusteck_price"] = connector_data.get("preis", 2.50)
-        
-        context.collection.objects.link(obj)
-        context.view_layer.objects.active = obj
-        obj.select_set(True)
-        
-        return {'FINISHED'}
+        try:
+            import bmesh
+            
+            bm = bmesh.new()
+            size = 0.0125
+            verts = [
+                bm.verts.new((-size, -size, -size)),
+                bm.verts.new((size, -size, -size)),
+                bm.verts.new((size, size, -size)),
+                bm.verts.new((-size, size, -size)),
+                bm.verts.new((-size, -size, size)),
+                bm.verts.new((size, -size, size)),
+                bm.verts.new((size, size, size)),
+                bm.verts.new((-size, size, size)),
+            ]
+            
+            for f in [
+                [verts[0], verts[1], verts[2], verts[3]],
+                [verts[4], verts[7], verts[6], verts[5]],
+                [verts[0], verts[4], verts[5], verts[1]],
+                [verts[2], verts[6], verts[7], verts[3]],
+                [verts[0], verts[3], verts[7], verts[4]],
+                [verts[1], verts[5], verts[6], verts[2]],
+            ]:
+                bm.faces.new(f)
+            
+            mesh = bpy.data.meshes.new(f"Connector_{self.artikel_nr}")
+            bm.to_mesh(mesh)
+            bm.free()
+            
+            obj = bpy.data.objects.new(mesh.name, mesh)
+            obj.data.materials.append(get_connector_material())
+            
+            obj["alusteck_type"] = "connector"
+            obj["alusteck_artikel_nr"] = connector_data["artikel_nr"]
+            obj["alusteck_kategorie"] = self.kategorie
+            obj["alusteck_ways"] = connector_data.get("anzahl_wege", 6)
+            obj["alusteck_name"] = connector_data["name"]
+            obj["alusteck_price"] = connector_data.get("preis", 2.50)
+            
+            context.collection.objects.link(obj)
+            context.view_layer.objects.active = obj
+            obj.select_set(True)
+            
+            return {'FINISHED'}
+        except Exception as e:
+            self.report({'ERROR'}, f"Error: {e}")
+            return {'CANCELLED'}
 
 
 class ALUSTECK_OT_snap_connector(Operator):

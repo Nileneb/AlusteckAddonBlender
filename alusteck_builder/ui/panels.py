@@ -31,7 +31,7 @@ class ALUSTECK_PT_snap_tools(Panel):
         
         layout.label(text="Verbinder-Modus:", icon='SNAP_ON')
         row = layout.row()
-        row.operator("alusteck.snap_connector", text="Snap starten", icon='MAGNET')
+        row.operator("alusteck.snap_connector", text="Snap starten", icon='SNAP_ON')
         
         layout.separator()
         layout.label(text="So funktioniert's:", icon='INFO')
@@ -95,7 +95,7 @@ class ALUSTECK_PT_stuckliste(Panel):
         
         # Komponenten-Liste
         box = layout.box()
-        box.label(text="🔩 Komponenten:", icon='LINENUMBERS_ON')
+        box.label(text="🔩 Komponenten:", icon='DOT')
         
         if not components:
             box.label(text="(Keine Komponenten in der Szene)")
@@ -195,11 +195,11 @@ class ALUSTECK_PT_validation(Panel):
         
         # Check-Items
         box = layout.box()
-        box.label(text="Komponenten-Verbindungen", icon='CONSTRAINT_DISTANCE')
-        box.label(text="Profil-Längen (zu lang?)", icon='STRAIGHTCURVE')
+        box.label(text="Komponenten-Verbindungen", icon='CONSTRAINT')
+        box.label(text="Profil-Längen (zu lang?)", icon='MESH_CUBE')
         box.label(text="Port-Belegung", icon='PIVOT_CURSOR')
-        box.label(text="Geometrische Symmetrie", icon='ALIGN_CENTER')
-        box.label(text="Basis-Stabilität", icon='OUTLINER_OB_ARMATURE')
+        box.label(text="Geometrische Symmetrie", icon='CHECKMARK')
+        box.label(text="Basis-Stabilität", icon='PHYSICS')
         
         layout.separator()
         layout.label(text="Reports werden in Console angezeigt", icon='CONSOLE')
