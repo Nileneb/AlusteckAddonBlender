@@ -1,73 +1,71 @@
-"""Blender menus for Alusteck Builder - Add menu integration."""
+"""
+UI Menus - Component selection menus
+"""
 
-try:
-    import bpy
-    HAS_BLENDER = True
-except ImportError:
-    bpy = None
-    HAS_BLENDER = False
+import bpy
+from bpy.types import Menu
 
 
-if HAS_BLENDER:
-    class ALUSTECK_MT_add_menu(bpy.types.Menu):
-        """Add menu for Alusteck components."""
-        bl_idname = "ALUSTECK_MT_add_menu"
-        bl_label = "Alusteck Builder"
-
-        def draw(self, context):  # noqa: D401
-            layout = self.layout
-            
-            # Systems
-            layout.label(text="Systeme:")
-            row = layout.row(align=True)
-            row.label(text="20mm")
-            row.label(text="25mm")
-            row.label(text="30mm")
-            
-            # Components
+class ALUSTECK_MT_add_menu(Menu):
+    """Dynamisches Menü für Komponenten aus Datenbank"""
+    bl_idname = "ALUSTECK_MT_add_menu"
+    bl_label = "Alusteck Stecksystem"
+    
+    def draw(self, context):
+        from .. import ALUSTECK_DATABASE
+        
+        layout = self.layout
+        
+        if not ALUSTECK_DATABASE:
+            layout.label(text="⚠️ Datenbank nicht verfügbar!", icon='ERROR')
+            return
+        
+        kategorien = ALUSTECK_DATABASE.get("kategorien", {})
+        
+        for kategorie_name in sorted(kategorien.keys()):
             layout.separator()
-            layout.label(text="Komponenten:")
-            col = layout.column(align=True)
+            layout.label(text=f"{kategorie_name} System", icon='MOD_BUILD')
             
-            # Use properties dict to pass operator arguments (Blender 5.0 compatible)
-            op = col.operator("alusteck.add_component", text="Profil")
-            if op:
-                op.component_type = "PROFILE"
-                op.system = "25"
+            kat_data = kategorien[kategorie_name]
             
-            op = col.operator("alusteck.add_component", text="Verbinder")
-            if op:
-                op.component_type = "CONNECTOR"
-                op.system = "25"
+            # Profile
+            profile_list = kat_data.get("profile", [])
+            if profile_list:
+                layout.label(text="  ▸ Profile", icon='MOD_ARRAY')
+                for profil in profile_list:
+                    op = layout.operator(
+                        "alusteck.add_profile",
+                        text=f"    {profil['name']}"
+                    )
+                    op.artikel_nr = profil["artikel_nr"]
+                    op.kategorie = kategorie_name
             
-            op = col.operator("alusteck.add_component", text="Zubehör")
-            if op:
-                op.component_type = "ACCESSORY"
-            op.system = "25"
+            # Verbinder
+            verbinder_list = kat_data.get("verbinder", [])
+            if verbinder_list:
+                layout.label(text="  ▸ Steckverbinder", icon='PIVOT_INDIVIDUAL')
+                for verb in verbinder_list:
+                    op = layout.operator(
+                        "alusteck.add_connector",
+                        text=f"    {verb['name']}"
+                    )
+                    op.artikel_nr = verb["artikel_nr"]
+                    op.kategorie = kategorie_name
 
 
-def _menu_func(self, context):
-    """Add Alusteck menu to Add > Mesh menu."""
-    self.layout.menu("ALUSTECK_MT_add_menu", icon='PLUGIN')
+def menu_func(self, context):
+    """Hook für Add > Mesh > Alusteck"""
+    self.layout.menu("ALUSTECK_MT_add_menu", icon='MOD_BUILD')
 
 
-if HAS_BLENDER:
-    classes = (ALUSTECK_MT_add_menu,)
-else:
-    classes = tuple()
+def register():
+    """Registriert alle Menus"""
+    bpy.utils.register_class(ALUSTECK_MT_add_menu)
+    bpy.types.VIEW3D_MT_mesh_add.append(menu_func)
 
 
-def register_menus():
-    if not HAS_BLENDER:
-        return
-    for cls in classes:
-        bpy.utils.register_class(cls)
-    bpy.types.VIEW3D_MT_mesh_add.append(_menu_func)
+def unregister():
+    """Unregistriert alle Menus"""
+    bpy.types.VIEW3D_MT_mesh_add.remove(menu_func)
+    bpy.utils.unregister_class(ALUSTECK_MT_add_menu)
 
-
-def unregister_menus():
-    if not HAS_BLENDER:
-        return
-    bpy.types.VIEW3D_MT_mesh_add.remove(_menu_func)
-    for cls in reversed(classes):
-        bpy.utils.unregister_class(cls)

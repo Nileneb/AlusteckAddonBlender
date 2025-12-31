@@ -1,193 +1,502 @@
 {
   "20mm": {
-    "profil_aussen_mm": 20.0,
-    "profil_innen_mm": 17.0,
-    "zapfen_laenge_mm": 20.0,
-    "zapfen_toleranz_mm": 0.5,
-    "snap_distanz_mm": 20.0,
-    "verbinder_typen": {
+    "profil_specs": {
+      "aussen_mm": 20.0,
+      "innen_mm": 17.0,
+      "toleranz_mm": 0.1
+    },
+    "verbinder_specs": {
+      "zapfen_laenge_mm": 20.0,
+      "zapfen_toleranz_mm": 0.5,
+      "einsteck_tiefe_mm": 16.0,
+      "min_abstand_mm": 25.0
+    },
+    "snap_algorithmus": {
+      "snap_distanz_mm": 30.0,
+      "auto_connect": true,
+      "kollisions_check": true,
+      "winkel_toleranz_grad": 5.0
+    },
+    "verbinder_geometrie": {
       "gerade": {
-        "max_anschluesse": 2,
-        "richtungen": [[1, 0, 0], [-1, 0, 0]],
-        "kollisions_check": false
+        "anschluesse": 2,
+        "richtungen": [
+          [
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            -1
+          ]
+        ],
+        "kollision": false
       },
       "winkel": {
-        "max_anschluesse": 2,
-        "richtungen": [[1, 0, 0], [0, 1, 0]],
+        "anschluesse": 2,
+        "richtungen": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
         "winkel": 90,
-        "kollisions_check": true
+        "kollision": true
       },
       "t-stueck": {
-        "max_anschluesse": 3,
-        "richtungen": [[1, 0, 0], [-1, 0, 0], [0, 1, 0]],
-        "kollisions_check": true
-      },
-      "wuerfel_3": {
-        "max_anschluesse": 3,
-        "richtungen": [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
-        "kollisions_check": true
-      },
-      "kreuz": {
-        "max_anschluesse": 4,
-        "richtungen": [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0]],
-        "kollisions_check": true
-      },
-      "wuerfel_4": {
-        "max_anschluesse": 4,
-        "richtungen": [[1, 0, 0], [0, 1, 0], [0, 0, 1], [-1, 0, 0]],
-        "kollisions_check": true
-      },
-      "wuerfel_5": {
-        "max_anschluesse": 5,
-        "richtungen": [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1]],
-        "kollisions_check": true
+        "anschluesse": 3,
+        "richtungen": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            -1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "kollision": true
       },
       "wuerfel_6": {
-        "max_anschluesse": 6,
-        "richtungen": [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]],
-        "kollisions_check": true
+        "anschluesse": 6,
+        "richtungen": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            -1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            -1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            -1
+          ]
+        ],
+        "kollision": true
       }
     },
-    "steg_regeln": {
+    "steg_kompatibilität": {
       "innenwinkel": {
-        "blockierte_richtungen": [[1, 0, 0], [0, 1, 0]],
-        "erlaubte_verbinder": ["winkel", "t-stueck"]
+        "blockierte_richtungen": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "empfohlene_verbinder": [
+          "winkel",
+          "t-stueck"
+        ]
       },
       "aussenwinkel": {
-        "blockierte_richtungen": [[-1, 0, 0], [0, -1, 0]],
-        "erlaubte_verbinder": ["winkel", "t-stueck"]
+        "blockierte_richtungen": [
+          [
+            -1,
+            0,
+            0
+          ],
+          [
+            0,
+            -1,
+            0
+          ]
+        ],
+        "empfohlene_verbinder": [
+          "winkel",
+          "t-stueck"
+        ]
       },
       "gegenueber": {
-        "blockierte_richtungen": [[1, 0, 0], [-1, 0, 0]],
-        "erlaubte_verbinder": ["gerade", "kreuz"]
+        "blockierte_richtungen": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            -1,
+            0,
+            0
+          ]
+        ],
+        "empfohlene_verbinder": [
+          "gerade",
+          "kreuz"
+        ]
       }
     }
   },
   "25mm": {
-    "profil_aussen_mm": 25.0,
-    "profil_innen_mm": 22.0,
-    "zapfen_laenge_mm": 25.0,
-    "zapfen_toleranz_mm": 0.5,
-    "snap_distanz_mm": 25.0,
-    "verbinder_typen": {
+    "profil_specs": {
+      "aussen_mm": 25.0,
+      "innen_mm": 22.0,
+      "toleranz_mm": 0.1
+    },
+    "verbinder_specs": {
+      "zapfen_laenge_mm": 25.0,
+      "zapfen_toleranz_mm": 0.5,
+      "einsteck_tiefe_mm": 20.0,
+      "min_abstand_mm": 30.0
+    },
+    "snap_algorithmus": {
+      "snap_distanz_mm": 37.5,
+      "auto_connect": true,
+      "kollisions_check": true,
+      "winkel_toleranz_grad": 5.0
+    },
+    "verbinder_geometrie": {
       "gerade": {
-        "max_anschluesse": 2,
-        "richtungen": [[1, 0, 0], [-1, 0, 0]],
-        "kollisions_check": false
+        "anschluesse": 2,
+        "richtungen": [
+          [
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            -1
+          ]
+        ],
+        "kollision": false
       },
       "winkel": {
-        "max_anschluesse": 2,
-        "richtungen": [[1, 0, 0], [0, 1, 0]],
+        "anschluesse": 2,
+        "richtungen": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
         "winkel": 90,
-        "kollisions_check": true
+        "kollision": true
       },
       "t-stueck": {
-        "max_anschluesse": 3,
-        "richtungen": [[1, 0, 0], [-1, 0, 0], [0, 1, 0]],
-        "kollisions_check": true
-      },
-      "wuerfel_3": {
-        "max_anschluesse": 3,
-        "richtungen": [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
-        "kollisions_check": true
-      },
-      "kreuz": {
-        "max_anschluesse": 4,
-        "richtungen": [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0]],
-        "kollisions_check": true
-      },
-      "wuerfel_4": {
-        "max_anschluesse": 4,
-        "richtungen": [[1, 0, 0], [0, 1, 0], [0, 0, 1], [-1, 0, 0]],
-        "kollisions_check": true
-      },
-      "wuerfel_5": {
-        "max_anschluesse": 5,
-        "richtungen": [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1]],
-        "kollisions_check": true
+        "anschluesse": 3,
+        "richtungen": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            -1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "kollision": true
       },
       "wuerfel_6": {
-        "max_anschluesse": 6,
-        "richtungen": [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]],
-        "kollisions_check": true
+        "anschluesse": 6,
+        "richtungen": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            -1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            -1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            -1
+          ]
+        ],
+        "kollision": true
       }
     },
-    "steg_regeln": {
+    "steg_kompatibilität": {
       "innenwinkel": {
-        "blockierte_richtungen": [[1, 0, 0], [0, 1, 0]],
-        "erlaubte_verbinder": ["winkel", "t-stueck"]
+        "blockierte_richtungen": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "empfohlene_verbinder": [
+          "winkel",
+          "t-stueck"
+        ]
       },
       "aussenwinkel": {
-        "blockierte_richtungen": [[-1, 0, 0], [0, -1, 0]],
-        "erlaubte_verbinder": ["winkel", "t-stueck"]
+        "blockierte_richtungen": [
+          [
+            -1,
+            0,
+            0
+          ],
+          [
+            0,
+            -1,
+            0
+          ]
+        ],
+        "empfohlene_verbinder": [
+          "winkel",
+          "t-stueck"
+        ]
       },
       "gegenueber": {
-        "blockierte_richtungen": [[1, 0, 0], [-1, 0, 0]],
-        "erlaubte_verbinder": ["gerade", "kreuz"]
+        "blockierte_richtungen": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            -1,
+            0,
+            0
+          ]
+        ],
+        "empfohlene_verbinder": [
+          "gerade",
+          "kreuz"
+        ]
       }
     }
   },
   "30mm": {
-    "profil_aussen_mm": 30.0,
-    "profil_innen_mm": 27.0,
-    "zapfen_laenge_mm": 30.0,
-    "zapfen_toleranz_mm": 0.5,
-    "snap_distanz_mm": 30.0,
-    "verbinder_typen": {
+    "profil_specs": {
+      "aussen_mm": 30.0,
+      "innen_mm": 27.0,
+      "toleranz_mm": 0.1
+    },
+    "verbinder_specs": {
+      "zapfen_laenge_mm": 30.0,
+      "zapfen_toleranz_mm": 0.5,
+      "einsteck_tiefe_mm": 24.0,
+      "min_abstand_mm": 35.0
+    },
+    "snap_algorithmus": {
+      "snap_distanz_mm": 45.0,
+      "auto_connect": true,
+      "kollisions_check": true,
+      "winkel_toleranz_grad": 5.0
+    },
+    "verbinder_geometrie": {
       "gerade": {
-        "max_anschluesse": 2,
-        "richtungen": [[1, 0, 0], [-1, 0, 0]],
-        "kollisions_check": false
+        "anschluesse": 2,
+        "richtungen": [
+          [
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            -1
+          ]
+        ],
+        "kollision": false
       },
       "winkel": {
-        "max_anschluesse": 2,
-        "richtungen": [[1, 0, 0], [0, 1, 0]],
+        "anschluesse": 2,
+        "richtungen": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
         "winkel": 90,
-        "kollisions_check": true
+        "kollision": true
       },
       "t-stueck": {
-        "max_anschluesse": 3,
-        "richtungen": [[1, 0, 0], [-1, 0, 0], [0, 1, 0]],
-        "kollisions_check": true
-      },
-      "wuerfel_3": {
-        "max_anschluesse": 3,
-        "richtungen": [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
-        "kollisions_check": true
-      },
-      "kreuz": {
-        "max_anschluesse": 4,
-        "richtungen": [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0]],
-        "kollisions_check": true
-      },
-      "wuerfel_4": {
-        "max_anschluesse": 4,
-        "richtungen": [[1, 0, 0], [0, 1, 0], [0, 0, 1], [-1, 0, 0]],
-        "kollisions_check": true
-      },
-      "wuerfel_5": {
-        "max_anschluesse": 5,
-        "richtungen": [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1]],
-        "kollisions_check": true
+        "anschluesse": 3,
+        "richtungen": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            -1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "kollision": true
       },
       "wuerfel_6": {
-        "max_anschluesse": 6,
-        "richtungen": [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]],
-        "kollisions_check": true
+        "anschluesse": 6,
+        "richtungen": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            -1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            -1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            -1
+          ]
+        ],
+        "kollision": true
       }
     },
-    "steg_regeln": {
+    "steg_kompatibilität": {
       "innenwinkel": {
-        "blockierte_richtungen": [[1, 0, 0], [0, 1, 0]],
-        "erlaubte_verbinder": ["winkel", "t-stueck"]
+        "blockierte_richtungen": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "empfohlene_verbinder": [
+          "winkel",
+          "t-stueck"
+        ]
       },
       "aussenwinkel": {
-        "blockierte_richtungen": [[-1, 0, 0], [0, -1, 0]],
-        "erlaubte_verbinder": ["winkel", "t-stueck"]
+        "blockierte_richtungen": [
+          [
+            -1,
+            0,
+            0
+          ],
+          [
+            0,
+            -1,
+            0
+          ]
+        ],
+        "empfohlene_verbinder": [
+          "winkel",
+          "t-stueck"
+        ]
       },
       "gegenueber": {
-        "blockierte_richtungen": [[1, 0, 0], [-1, 0, 0]],
-        "erlaubte_verbinder": ["gerade", "kreuz"]
+        "blockierte_richtungen": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            -1,
+            0,
+            0
+          ]
+        ],
+        "empfohlene_verbinder": [
+          "gerade",
+          "kreuz"
+        ]
       }
     }
   }

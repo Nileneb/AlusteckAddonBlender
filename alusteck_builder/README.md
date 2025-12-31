@@ -303,42 +303,51 @@ alusteck_builder/
 
 ## 🚀 Roadmap
 
-### Phase 1: Foundation ✅
+### Phase 1: Foundation ✅ ABGESCHLOSSEN
 
-- [x] Basis-Addon Struktur
+- [x] Basis-Addon Struktur (modulare Architektur)
 - [x] Profil-Mesh-Generator (Hohlkörper mit BMesh)
 - [x] Verbinder-Mesh-Generator (2-6 Wege mit Zapfen)
-- [x] Material-System & Rendering
+- [x] Material-System & Rendering (Aluminum + Kunststoff)
 
-### Phase 2: Datenbank ✅
+### Phase 2: Datenbank ✅ ABGESCHLOSSEN
 
 - [x] JSON-Schema definieren
-- [x] Scraper für Produktdaten (alusteck.de)
-- [x] Alle 3 Systeme (20/25/30mm) erfassen
-- [x] Steg-Varianten integrieren
-- [x] Preise & Verfügbarkeit
+- [x] Docker-Scraper für Produktdaten (Offline-Demo)
+- [x] Alle 3 Systeme (20/25/30mm) mit Komponenten
+- [x] Steg-Varianten strukturiert (Innenwinkel/Außenwinkel/Gegenüber)
+- [x] Snap-Regeln pro System generiert
+- [x] Preise & Verfügbarkeit integriert
+- [x] **NEU**: Datenbank in **init**.py geladen (dynamische Menüs!)
 
-### Phase 3: Snap-Engine ✅
+### Phase 3: Snap-Engine 🔄 IN ARBEIT - PRIORITÄT!
 
-- [x] Port-basiertes Snap-System
-- [x] Echtzeit Snap-Vorschau (GPU Shader)
-- [x] Steg-Kompatibilitätsprüfung
-- [x] Konstruktions-Validierung (DFS Graph Analysis)
-- [x] Modal Operator (Race-Condition Fixes)
+- [ ] **Port-basiertes Snap-System** (Grundlagen vorhanden, nicht integriert)
+- [ ] Echtzeit Snap-Vorschau (GPU Shader - optional)
+- [ ] Steg-Kompatibilitätsprüfung (Regeln existieren, nicht aktiv)
+- [ ] Konstruktions-Validierung (DFS Graph Analysis)
+- [ ] Modal Operator für Snap-Interaktion
 
-### Phase 4: Export & Polish ✅
+**Status**: Snap-Regeln sind in `snap_rules.json`, aber Engine ist NICHT aktiv!
 
-- [x] Stücklisten-Export (CSV/JSON)
-- [x] Kostenberechnung mit Margin
-- [x] Direktlink zum Alusteck-Warenkorb
-- [ ] Preset-Bibliothek (ausgelagert auf Phase 5+)
+### Phase 4: Export & Polish 🔄 TEILWEISE
 
-### Phase 5: AI-Integration 🚀
+- [x] Stücklisten-Export (CSV/JSON) - Module vorhanden
+- [x] Kostenberechnung - Module vorhanden
+- [x] Shop-Link Generator - Module vorhanden
+- [ ] **ABER**: UI-Integration in Panels FEHLT!
+- [ ] Preset-Bibliothek (ausgelagert)
+
+**Status**: Export-Module existieren, sind aber NICHT an UI angebunden!
+
+### Phase 5: AI-Integration ⏸️ NICHT GESTARTET
 
 - [ ] Chat-Panel in Blender Sidebar
 - [ ] Claude API Integration
 - [ ] Text → Struktur Konvertierung
 - [ ] Best-Practice Vorschläge
+
+**Status**: AI-Module vorhanden (`ai/` Ordner), aber NICHT implementiert!
 
 ---
 
@@ -546,9 +555,44 @@ Snap-Regeln:
 ⚠️ Benötigt: Claude API-Key in Addon-Preferences
 ```
 
----
+## ⚡ AKTUELLE PRIORITÄTEN (Q1 2025)
 
-## 🤝 Contributing
+### SOFORT - KRITISCH 🔴
+
+1. **Snap-Engine aktivieren**
+   - Modal Operator für Verbinder-Snapping
+   - Port-Geometrie berechnen (aus Datenbank)
+   - Kollisions-Detection
+   - Steg-Kompatibilität prüfen
+2. **UI-Panels mit Funktionen füllen**
+
+   - Export Panel: BOM/Kosten exportieren (buttons hinzufügen)
+   - Validation Panel: Struktur prüfen
+   - Properties Panel: Komponenten-Eigenschaften anzeigen
+
+3. **Komponenten-Registry aktivieren**
+   - `core/registry.py` implementieren
+   - Database-Komponenten registrieren
+   - Snap-Rules laden und validieren
+
+### NÄCHSTE WELLE 🟡
+
+4. **AI-Integration grundlegen**
+
+   - `ai/chat_interface.py`: Chat-Panel UI
+   - `ai/structure_generator.py`: Text-zu-3D
+   - Claude API Integration
+
+5. **Presets implementieren**
+   - `data/presets/*.json` laden
+   - One-Click Konstruktion erstellen
+   - Beispiele: Regal, Tisch, Rahmen
+
+### LATER 🟢
+
+6. Performance Optimization
+7. Advanced AI Features
+8. Erweiterte Snap-Vorschau
 
 Contributions & Bug Reports welcome!
 

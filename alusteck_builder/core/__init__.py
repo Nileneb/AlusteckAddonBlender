@@ -41,7 +41,6 @@ from .database import (
 from .registry import (
     ComponentRegistry,
     get_registry,
-    reload_registry,
 )
 
 __all__ = [
@@ -71,7 +70,6 @@ __all__ = [
     "registry",
     "ComponentRegistry",
     "get_registry",
-    "reload_registry",
 ]
 
 
@@ -89,7 +87,7 @@ def initialize():
     
     # Lade Registry
     reg = get_registry()
-    systems = reg.get_systems()
+    systems = reg.list_systems()
     print(f"✓ Core initialized ({len(systems)} systems available)")
     
     return is_valid
